@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -19,18 +20,22 @@ public class ADWidgetApi {
     public static void main(String[] args) {
 
 
-        new ADWidgetApi().buildDB(new MetricObject().initialize("996"));
+        try {
+            new ADWidgetApi().buildDB(new MetricObject().initialize("996"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     private void buildDB(MetricObject metricObject) {
-
 
         MongoCredential credential = MongoCredential.createCredential("db", "dashboard", "dbpass".toCharArray());
         MongoClient mongoClient = new MongoClient(new ServerAddress("localhost", 27017), Arrays.asList(credential));
         MongoDatabase db = mongoClient.getDatabase("dashboard");
         MongoCollection<Document> collection = db.getCollection("metrics");
         collection.drop();
-
 
         Map<String, Double> metricDataMap = metricObject.getMetricDataMap();
 
